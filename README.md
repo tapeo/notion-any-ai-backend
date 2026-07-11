@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# backend-any-ai-for-notion
 
-## Getting Started
+Next.js backend that proxies Notion API calls and handles Notion OAuth for the
+"Any AI for Notion" mobile app. The app authenticates the user through this
+server, stores the tokens, then sends tool calls here so it never touches the
+Notion API directly.
 
-First, run the development server:
+## how it works
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. The app calls `/api/notion-oauth/start` to get a Notion authorization URL.
+2. The user authorizes in Notion, which redirects to
+   `/api/notion-oauth/callback`. The callback exchanges the code for tokens and
+   returns an HTML page that deep-links back to the app via the
+   `notionopenai://oauth/callback` scheme with the access and refresh tokens.
+3. The app stores the tokens and sends tool calls to `/api/notion/tool` with
+   the access token in the request body. The server forwards the call to the
+   Notion API and returns the result.
+4. When the access token expires, the app refreshes it via
+   `/api/notion-oauth/refresh`.
+
+The server talks to the Notion API at version `2026-03-11` using raw `fetch`
+(no Notion SDK).
+
+## API endpoints
+
+| method | path                          | auth                          | purpose                                              |
+| ------ | ----------------------------- | ----------------------------- | ---------------------------------------------------- |
+| GET    | `/api/health`                 | none                          | health check, returns `{ "status": "ok" }`           |
+| POST   | `/api/notion-oauth/start`     | none                          | returns a Notion authorization URL                   |
+| GET    | `/api/notion-oauth/callback`  | none                          | OAuth redirect target, deep-links tokens to the app   |
+| POST   | `/api/notion-oauth/refresh`   | body: `refresh_token`         | exchanges a refresh token for new tokens              |
+| POST   | `/api/notion/tool`            | body: `access_token`          | executes a Notion tool by name and arguments          |
+| GET    | `/api/notion/self`            | `Authorization: Bearer`       | returns the connected bot's workspace info            |
+
+### `/api/notion/tool`
+
+Request body:
+
+```json
+{
+  "access_token": "secret_...",
+  "name": "notion_search",
+  "arguments": { "query": "meeting notes" }
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Response:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```json
+{
+  "content": "...",
+  "is_error": false
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Notion tools
 
-## Learn More
+`/api/notion/tool` dispatches the following tool names:
 
-To learn more about Next.js, take a look at the following resources:
+| tool                      | description                                                        |
+| ------------------------- | ----------------------------------------------------------------- |
+| `notion_search`            | search pages and data sources                                     |
+| `notion_fetch_page`        | get a page by id                                                  |
+| `notion_get_blocks`        | get a block's children; renders to markdown by default (`as_markdown`) |
+| `notion_get_comments`      | list comments on a block                                          |
+| `notion_get_users`         | list users in the workspace                                       |
+| `notion_get_database`      | get a data source's schema                                        |
+| `notion_query_database`    | query a data source with filters and sorts                        |
+| `notion_create_page`       | create a page under a parent                                      |
+| `notion_update_page`       | update a page's properties                                        |
+| `notion_append_blocks`     | append child blocks to a block                                    |
+| `notion_update_block`      | update a block                                                    |
+| `notion_delete_block`      | delete a block                                                    |
+| `notion_archive_page`      | archive or unarchive a page                                       |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### data sources
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Notion API version `2026-03-11` uses data sources instead of databases. The
+`notion_get_database` and `notion_query_database` tools accept either a
+`data_source_id` directly, or a `database_id` that the server resolves to a
+data source. If the database has multiple data sources, the server returns an
+error listing each one so the caller can retry with an explicit
+`data_source_id`.
 
-## Deploy on Vercel
+## environment variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Copy `.env.example` to `.env` and fill in the values:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| variable                       | description                                      |
+| ------------------------------ | ------------------------------------------------ |
+| `NOTION_CLIENT_ID`             | Notion OAuth client id                            |
+| `NOTION_CLIENT_SECRET`         | Notion OAuth client secret                       |
+| `NOTION_OAUTH_REDIRECT_URI`     | public URL of `/api/notion-oauth/callback`        |
+| `NOTION_OAUTH_STATE_SECRET`     | random secret used to sign the OAuth state JWT   |
+
+## getting started
+
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
+
+The server runs on `http://localhost:3000`. Point the mobile app at this URL.
