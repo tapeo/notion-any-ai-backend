@@ -23,14 +23,14 @@ The server talks to the Notion API at version `2026-03-11` using raw `fetch`
 
 ## API endpoints
 
-| method | path                          | auth                          | purpose                                              |
-| ------ | ----------------------------- | ----------------------------- | ---------------------------------------------------- |
-| GET    | `/api/health`                 | none                          | health check, returns `{ "status": "ok" }`           |
-| POST   | `/api/notion-oauth/start`     | none                          | returns a Notion authorization URL                   |
-| GET    | `/api/notion-oauth/callback`  | none                          | OAuth redirect target, deep-links tokens to the app   |
-| POST   | `/api/notion-oauth/refresh`   | body: `refresh_token`         | exchanges a refresh token for new tokens              |
-| POST   | `/api/notion/tool`            | body: `access_token`          | executes a Notion tool by name and arguments          |
-| GET    | `/api/notion/self`            | `Authorization: Bearer`       | returns the connected bot's workspace info            |
+| method | path                         | auth                    | purpose                                             |
+| ------ | ---------------------------- | ----------------------- | --------------------------------------------------- |
+| GET    | `/api/health`                | none                    | health check, returns `{ "status": "ok" }`          |
+| POST   | `/api/notion-oauth/start`    | none                    | returns a Notion authorization URL                  |
+| GET    | `/api/notion-oauth/callback` | none                    | OAuth redirect target, deep-links tokens to the app |
+| POST   | `/api/notion-oauth/refresh`  | body: `refresh_token`   | exchanges a refresh token for new tokens            |
+| POST   | `/api/notion/tool`           | body: `access_token`    | executes a Notion tool by name and arguments        |
+| GET    | `/api/notion/self`           | `Authorization: Bearer` | returns the connected bot's workspace info          |
 
 ### `/api/notion/tool`
 
@@ -57,21 +57,21 @@ Response:
 
 `/api/notion/tool` dispatches the following tool names:
 
-| tool                      | description                                                        |
-| ------------------------- | ----------------------------------------------------------------- |
-| `notion_search`            | search pages and data sources                                     |
-| `notion_fetch_page`        | get a page by id                                                  |
-| `notion_get_blocks`        | get a block's children; renders to markdown by default (`as_markdown`) |
-| `notion_get_comments`      | list comments on a block                                          |
-| `notion_get_users`         | list users in the workspace                                       |
-| `notion_get_database`      | get a data source's schema                                        |
-| `notion_query_database`    | query a data source with filters and sorts                        |
-| `notion_create_page`       | create a page under a parent                                      |
-| `notion_update_page`       | update a page's properties                                        |
-| `notion_append_blocks`     | append child blocks to a block                                    |
-| `notion_update_block`      | update a block                                                    |
-| `notion_delete_block`      | delete a block                                                    |
-| `notion_archive_page`      | archive or unarchive a page                                       |
+| tool                    | description                                                            |
+| ----------------------- | ---------------------------------------------------------------------- |
+| `notion_search`         | search pages and data sources                                          |
+| `notion_fetch_page`     | get a page by id                                                       |
+| `notion_get_blocks`     | get a block's children; renders to markdown by default (`as_markdown`) |
+| `notion_get_comments`   | list comments on a block                                               |
+| `notion_get_users`      | list users in the workspace                                            |
+| `notion_get_database`   | get a data source's schema                                             |
+| `notion_query_database` | query a data source with filters and sorts                             |
+| `notion_create_page`    | create a page under a parent                                           |
+| `notion_update_page`    | update a page's properties                                             |
+| `notion_append_blocks`  | append child blocks to a block                                         |
+| `notion_update_block`   | update a block                                                         |
+| `notion_delete_block`   | delete a block                                                         |
+| `notion_archive_page`   | archive or unarchive a page                                            |
 
 ### data sources
 
@@ -86,12 +86,12 @@ error listing each one so the caller can retry with an explicit
 
 Copy `.env.example` to `.env` and fill in the values:
 
-| variable                       | description                                      |
-| ------------------------------ | ------------------------------------------------ |
-| `NOTION_CLIENT_ID`             | Notion OAuth client id                            |
-| `NOTION_CLIENT_SECRET`         | Notion OAuth client secret                       |
-| `NOTION_OAUTH_REDIRECT_URI`     | public URL of `/api/notion-oauth/callback`        |
-| `NOTION_OAUTH_STATE_SECRET`     | random secret used to sign the OAuth state JWT   |
+| variable                    | description                                    |
+| --------------------------- | ---------------------------------------------- |
+| `NOTION_CLIENT_ID`          | Notion OAuth client id                         |
+| `NOTION_CLIENT_SECRET`      | Notion OAuth client secret                     |
+| `NOTION_OAUTH_REDIRECT_URI` | public URL of `/api/notion-oauth/callback`     |
+| `NOTION_OAUTH_STATE_SECRET` | random secret used to sign the OAuth state JWT |
 
 ## getting started
 
