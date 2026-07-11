@@ -102,3 +102,50 @@ npm run dev
 ```
 
 The server runs on `http://localhost:3000`. Point the mobile app at this URL.
+
+## deploy
+
+The backend deploys to Google Cloud Run via `deploy.sh`.
+
+### prerequisites
+
+- `gcloud` CLI authenticated (`gcloud auth login`)
+- Docker installed and configured
+- A GCP project with an Artifact Registry Docker repository
+- Docker auth configured for the registry:
+  ```bash
+  gcloud auth configure-docker europe-docker.pkg.dev
+  ```
+
+### first-time setup
+
+1. Copy the example env file:
+   ```bash
+   cp .env.production.example .env.production
+   ```
+2. Fill in the GCP config (project id, region, registry, repository) and the
+   Notion secrets.
+3. Create the Artifact Registry repository if it does not exist yet:
+   ```bash
+   gcloud artifacts repositories create <GCP_REPO_NAME> \
+     --repository-format=docker \
+     --location=<GCP_REPO_LOCATION> \
+     --project=<GCP_PROJECT_ID>
+   ```
+
+### deploy
+
+```bash
+./deploy.sh
+```
+
+This exports a clean copy of the `main` branch, builds the Docker image, pushes
+it to Artifact Registry, and deploys to Cloud Run with the runtime env vars from
+`.env.production`.
+
+Use `--force` to deploy from the working directory without pushing first
+(useful for hotfixes):
+
+```bash
+./deploy.sh --force
+```
