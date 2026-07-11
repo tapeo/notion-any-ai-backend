@@ -21,6 +21,8 @@ export async function callTool(
         return await getUsers(accessToken, args);
       case "notion_get_database":
         return await getDatabase(accessToken, args);
+      case "notion_fetch_database":
+        return await fetchDatabase(accessToken, args);
       case "notion_query_database":
         return await queryDatabase(accessToken, args);
       case "notion_create_page":
@@ -149,6 +151,19 @@ async function getDatabase(
   const resolved = await resolveDataSourceId(accessToken, args, "notion_get_database");
   if ("error" in resolved) return resolved.error;
   const res = await get(accessToken, `/data_sources/${resolved.data_source_id}`);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function fetchDatabase(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const databaseId = args.database_id as string | undefined;
+  if (!databaseId || databaseId.length === 0) {
+    return missingParam("database_id", "notion_fetch_database");
+  }
+  const res = await get(accessToken, `/databases/${databaseId}`);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
 }
