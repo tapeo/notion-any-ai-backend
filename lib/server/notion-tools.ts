@@ -80,10 +80,7 @@ async function search(
   const cursor = args.start_cursor as string | undefined;
   if (cursor) body.start_cursor = cursor;
   const filter = args.filter;
-  if (typeof filter === "string") {
-    const value = filter === "database" ? "data_source" : filter;
-    body.filter = { property: "object", value };
-  } else if (filter && typeof filter === "object") {
+  if (filter && typeof filter === "object") {
     body.filter = filter;
   }
   const sortObj = args.sort;
@@ -342,14 +339,9 @@ async function createPage(
   if (!parent || typeof parent !== "object") {
     return missingParam("parent", "notion_create_page");
   }
+  const body: Record<string, unknown> = { parent };
   const properties = args.properties;
-  if (!properties || typeof properties !== "object") {
-    return missingParam("properties", "notion_create_page");
-  }
-  const body: Record<string, unknown> = {
-    parent,
-    properties,
-  };
+  if (properties && typeof properties === "object") body.properties = properties;
   const children = args.children;
   if (Array.isArray(children)) body.children = children;
   const icon = args.icon;
