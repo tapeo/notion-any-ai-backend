@@ -15,6 +15,14 @@ export async function callTool(
         return await fetchPage(accessToken, args);
       case "notion_get_blocks":
         return await getBlocks(accessToken, args);
+      case "notion_get_block":
+        return await getBlock(accessToken, args);
+      case "notion_get_page_property":
+        return await getPageProperty(accessToken, args);
+      case "notion_get_page_markdown":
+        return await getPageMarkdown(accessToken, args);
+      case "notion_update_page_markdown":
+        return await updatePageMarkdown(accessToken, args);
       case "notion_get_comments":
         return await getComments(accessToken, args);
       case "notion_get_users":
@@ -23,12 +31,22 @@ export async function callTool(
         return await getDatabase(accessToken, args);
       case "notion_fetch_database":
         return await fetchDatabase(accessToken, args);
+      case "notion_create_database":
+        return await createDatabase(accessToken, args);
+      case "notion_update_database":
+        return await updateDatabase(accessToken, args);
       case "notion_query_database":
         return await queryDatabase(accessToken, args);
+      case "notion_list_views":
+        return await listViews(accessToken, args);
+      case "notion_get_view_query_results":
+        return await getViewQueryResults(accessToken, args);
       case "notion_create_page":
         return await createPage(accessToken, args);
       case "notion_update_page":
         return await updatePage(accessToken, args);
+      case "notion_move_page":
+        return await movePage(accessToken, args);
       case "notion_append_blocks":
         return await appendBlocks(accessToken, args);
       case "notion_update_block":
@@ -63,6 +81,8 @@ async function search(
   if (typeof filter === "string") {
     const value = filter === "database" ? "data_source" : filter;
     body.filter = { property: "object", value };
+  } else if (filter && typeof filter === "object") {
+    body.filter = filter;
   }
   const sortObj = args.sort;
   if (sortObj && typeof sortObj === "object") {
@@ -108,6 +128,85 @@ async function getBlocks(
   const cursor = args.start_cursor as string | undefined;
   if (cursor) params.start_cursor = cursor;
   const res = await get(accessToken, `/blocks/${blockId}/children`, params);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function getBlock(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const blockId = args.block_id as string | undefined;
+  if (!blockId || blockId.length === 0) {
+    return missingParam("block_id", "notion_get_block");
+  }
+  const res = await get(accessToken, `/blocks/${blockId}`);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function getPageProperty(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const pageId = args.page_id as string | undefined;
+  if (!pageId || pageId.length === 0) {
+    return missingParam("page_id", "notion_get_page_property");
+  }
+  const propertyId = args.property_id as string | undefined;
+  if (!propertyId || propertyId.length === 0) {
+    return missingParam("property_id", "notion_get_page_property");
+  }
+  const params: Record<string, string> = {};
+  const pageSize = args.page_size as number | undefined;
+  if (pageSize !== undefined) params.page_size = String(pageSize);
+  const cursor = args.start_cursor as string | undefined;
+  if (cursor) params.start_cursor = cursor;
+  const res = await get(
+    accessToken,
+    `/pages/${pageId}/properties/${propertyId}`,
+    params,
+  );
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function getPageMarkdown(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const pageId = args.page_id as string | undefined;
+  if (!pageId || pageId.length === 0) {
+    return missingParam("page_id", "notion_get_page_markdown");
+  }
+  const params: Record<string, string> = {};
+  const includeTranscript = args.include_transcript as boolean | undefined;
+  if (includeTranscript !== undefined) {
+    params.include_transcript = String(includeTranscript);
+  }
+  const res = await get(accessToken, `/pages/${pageId}/markdown`, params);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function updatePageMarkdown(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const pageId = args.page_id as string | undefined;
+  if (!pageId || pageId.length === 0) {
+    return missingParam("page_id", "notion_update_page_markdown");
+  }
+  const markdown = args.markdown as string | undefined;
+  if (typeof markdown !== "string") {
+    return missingParam("markdown", "notion_update_page_markdown");
+  }
+  const body: Record<string, unknown> = { markdown };
+  const mode = args.mode as string | undefined;
+  if (mode) body.mode = mode;
+  const position = args.position;
+  if (position && typeof position === "object") body.position = position;
+  const res = await patch(accessToken, `/pages/${pageId}/markdown`, body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
 }
@@ -189,6 +288,23 @@ async function queryDatabase(
   if (isArchived !== undefined) body.is_archived = isArchived;
   const resultType = args.result_type as string | undefined;
   if (resultType) body.result_type = resultType;
+  const filterProperties = args.filter_properties;
+  const queryParams: Record<string, string> = {};
+  if (Array.isArray(filterProperties)) {
+    const path = `/data_sources/${resolved.data_source_id}/query`;
+    const url = new URLSearchParams();
+    for (const prop of filterProperties) {
+      if (typeof prop === "string") url.append("filter_properties[]", prop);
+    }
+    const query = url.toString();
+    const res = await post(
+      accessToken,
+      query.length > 0 ? `${path}?${query}` : path,
+      body,
+    );
+    if (!res.success) return errorResponse(res);
+    return { content: prettyJson(res.body), is_error: false };
+  }
   const res = await post(
     accessToken,
     `/data_sources/${resolved.data_source_id}/query`,
@@ -233,17 +349,17 @@ async function updatePage(
   if (!pageId || pageId.length === 0) {
     return missingParam("page_id", "notion_update_page");
   }
+  const body: Record<string, unknown> = {};
   const properties = args.properties;
-  if (!properties || typeof properties !== "object") {
-    return missingParam("properties", "notion_update_page");
-  }
-  const body: Record<string, unknown> = { properties };
+  if (properties && typeof properties === "object") body.properties = properties;
   const icon = args.icon;
   if (icon && typeof icon === "object") body.icon = icon;
   const cover = args.cover;
   if (cover && typeof cover === "object") body.cover = cover;
   const archived = args.archived as boolean | undefined;
   if (archived !== undefined) body.archived = archived;
+  const inTrash = args.in_trash as boolean | undefined;
+  if (inTrash !== undefined) body.in_trash = inTrash;
   const res = await patch(accessToken, `/pages/${pageId}`, body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
@@ -297,6 +413,112 @@ async function deleteBlock(
   const res = await del(accessToken, `/blocks/${blockId}`);
   if (!res.success) return errorResponse(res);
   return { content: `Block ${blockId} deleted.`, is_error: false };
+}
+
+async function movePage(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const pageId = args.page_id as string | undefined;
+  if (!pageId || pageId.length === 0) {
+    return missingParam("page_id", "notion_move_page");
+  }
+  const parent = args.parent;
+  if (!parent || typeof parent !== "object") {
+    return missingParam("parent", "notion_move_page");
+  }
+  const res = await post(accessToken, `/pages/${pageId}/move`, { parent });
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function createDatabase(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const parent = args.parent;
+  if (!parent || typeof parent !== "object") {
+    return missingParam("parent", "notion_create_database");
+  }
+  const title = args.title;
+  if (!Array.isArray(title)) {
+    return missingParam("title", "notion_create_database");
+  }
+  const properties = args.properties;
+  if (!properties || typeof properties !== "object") {
+    return missingParam("properties", "notion_create_database");
+  }
+  const body: Record<string, unknown> = { parent, title, properties };
+  const icon = args.icon;
+  if (icon && typeof icon === "object") body.icon = icon;
+  const cover = args.cover;
+  if (cover && typeof cover === "object") body.cover = cover;
+  const description = args.description;
+  if (Array.isArray(description)) body.description = description;
+  const res = await post(accessToken, "/databases", body);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function updateDatabase(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const databaseId = args.database_id as string | undefined;
+  if (!databaseId || databaseId.length === 0) {
+    return missingParam("database_id", "notion_update_database");
+  }
+  const body: Record<string, unknown> = {};
+  const title = args.title;
+  if (Array.isArray(title)) body.title = title;
+  const description = args.description;
+  if (Array.isArray(description)) body.description = description;
+  const properties = args.properties;
+  if (properties && typeof properties === "object") body.properties = properties;
+  const icon = args.icon;
+  if (icon && typeof icon === "object") body.icon = icon;
+  const cover = args.cover;
+  if (cover && typeof cover === "object") body.cover = cover;
+  const res = await patch(accessToken, `/databases/${databaseId}`, body);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function listViews(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const databaseId = args.database_id as string | undefined;
+  const dataSourceId = args.data_source_id as string | undefined;
+  if ((!databaseId || databaseId.length === 0) && (!dataSourceId || dataSourceId.length === 0)) {
+    return missingParam("database_id or data_source_id", "notion_list_views");
+  }
+  const params: Record<string, string> = {};
+  if (databaseId) params.database_id = databaseId;
+  if (dataSourceId) params.data_source_id = dataSourceId;
+  const pageSize = args.page_size as number | undefined;
+  if (pageSize !== undefined) params.page_size = String(pageSize);
+  const cursor = args.start_cursor as string | undefined;
+  if (cursor) params.start_cursor = cursor;
+  const res = await get(accessToken, "/views", params);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function getViewQueryResults(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const viewId = args.view_id as string | undefined;
+  if (!viewId || viewId.length === 0) {
+    return missingParam("view_id", "notion_get_view_query_results");
+  }
+  const body: Record<string, unknown> = {};
+  const pageSize = args.page_size as number | undefined;
+  if (pageSize !== undefined) body.page_size = pageSize;
+  const res = await post(accessToken, `/views/${viewId}/queries`, body);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
 }
 
 async function archivePage(
