@@ -35,6 +35,8 @@ export async function callTool(
         return await createDatabase(accessToken, args);
       case "notion_update_database":
         return await updateDatabase(accessToken, args);
+      case "notion_update_data_source":
+        return await updateDataSource(accessToken, args);
       case "notion_query_database":
         return await queryDatabase(accessToken, args);
       case "notion_list_views":
@@ -189,6 +191,15 @@ async function getPageMarkdown(
   return { content: prettyJson(res.body), is_error: false };
 }
 
+const MARKDOWN_COMMANDS = [
+  "insert_content",
+  "replace_content",
+  "replace_content_range",
+  "update_content",
+] as const;
+
+type MarkdownCommand = (typeof MARKDOWN_COMMANDS)[number];
+
 async function updatePageMarkdown(
   accessToken: string,
   args: Record<string, unknown>,
@@ -197,15 +208,24 @@ async function updatePageMarkdown(
   if (!pageId || pageId.length === 0) {
     return missingParam("page_id", "notion_update_page_markdown");
   }
-  const markdown = args.markdown as string | undefined;
-  if (typeof markdown !== "string") {
-    return missingParam("markdown", "notion_update_page_markdown");
+  const type = args.type as string | undefined;
+  if (!type || !MARKDOWN_COMMANDS.includes(type as MarkdownCommand)) {
+    return {
+      content: `Tool error: Missing or invalid 'type' for notion_update_page_markdown. Must be one of: ${MARKDOWN_COMMANDS.join(", ")}.`,
+      is_error: true,
+    };
   }
-  const body: Record<string, unknown> = { markdown };
-  const mode = args.mode as string | undefined;
-  if (mode) body.mode = mode;
-  const position = args.position;
-  if (position && typeof position === "object") body.position = position;
+  const command = type as MarkdownCommand;
+  const payload = args[command];
+  if (!payload || typeof payload !== "object") {
+    return {
+      content: `Tool error: Missing '${command}' payload for notion_update_page_markdown.`,
+      is_error: true,
+    };
+  }
+  const body: Record<string, unknown> = { type, [command]: payload };
+  const allowAsync = args.allow_async as boolean | undefined;
+  if (allowAsync !== undefined) body.allow_async = allowAsync;
   const res = await patch(accessToken, `/pages/${pageId}/markdown`, body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
@@ -336,6 +356,14 @@ async function createPage(
   if (icon && typeof icon === "object") body.icon = icon;
   const cover = args.cover;
   if (cover && typeof cover === "object") body.cover = cover;
+  const markdown = args.markdown;
+  if (typeof markdown === "string") body.markdown = markdown;
+  const template = args.template;
+  if (template && typeof template === "object") body.template = template;
+  const allowAsync = args.allow_async as boolean | undefined;
+  if (allowAsync !== undefined) body.allow_async = allowAsync;
+  const position = args.position;
+  if (position && typeof position === "object") body.position = position;
   const res = await post(accessToken, "/pages", body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
@@ -356,8 +384,6 @@ async function updatePage(
   if (icon && typeof icon === "object") body.icon = icon;
   const cover = args.cover;
   if (cover && typeof cover === "object") body.cover = cover;
-  const archived = args.archived as boolean | undefined;
-  if (archived !== undefined) body.archived = archived;
   const inTrash = args.in_trash as boolean | undefined;
   if (inTrash !== undefined) body.in_trash = inTrash;
   const res = await patch(accessToken, `/pages/${pageId}`, body);
@@ -378,8 +404,8 @@ async function appendBlocks(
     return missingParam("children", "notion_append_blocks");
   }
   const body: Record<string, unknown> = { children };
-  const after = args.after as string | undefined;
-  if (after) body.after = after;
+  const position = args.position;
+  if (position && typeof position === "object") body.position = position;
   const res = await patch(accessToken, `/blocks/${blockId}/children`, body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
@@ -440,21 +466,25 @@ async function createDatabase(
   if (!parent || typeof parent !== "object") {
     return missingParam("parent", "notion_create_database");
   }
+  const body: Record<string, unknown> = { parent };
   const title = args.title;
-  if (!Array.isArray(title)) {
-    return missingParam("title", "notion_create_database");
-  }
-  const properties = args.properties;
-  if (!properties || typeof properties !== "object") {
-    return missingParam("properties", "notion_create_database");
-  }
-  const body: Record<string, unknown> = { parent, title, properties };
+  if (Array.isArray(title)) body.title = title;
+  const description = args.description;
+  if (Array.isArray(description)) body.description = description;
+  const isInline = args.is_inline as boolean | undefined;
+  if (isInline !== undefined) body.is_inline = isInline;
   const icon = args.icon;
   if (icon && typeof icon === "object") body.icon = icon;
   const cover = args.cover;
   if (cover && typeof cover === "object") body.cover = cover;
-  const description = args.description;
-  if (Array.isArray(description)) body.description = description;
+  const properties = args.properties;
+  if (properties && typeof properties === "object") {
+    body.initial_data_source = { properties };
+  }
+  const initialDataSource = args.initial_data_source;
+  if (initialDataSource && typeof initialDataSource === "object") {
+    body.initial_data_source = initialDataSource;
+  }
   const res = await post(accessToken, "/databases", body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
@@ -473,13 +503,39 @@ async function updateDatabase(
   if (Array.isArray(title)) body.title = title;
   const description = args.description;
   if (Array.isArray(description)) body.description = description;
-  const properties = args.properties;
-  if (properties && typeof properties === "object") body.properties = properties;
   const icon = args.icon;
   if (icon && typeof icon === "object") body.icon = icon;
   const cover = args.cover;
   if (cover && typeof cover === "object") body.cover = cover;
+  const isInline = args.is_inline as boolean | undefined;
+  if (isInline !== undefined) body.is_inline = isInline;
+  const inTrash = args.in_trash as boolean | undefined;
+  if (inTrash !== undefined) body.in_trash = inTrash;
+  const isLocked = args.is_locked as boolean | undefined;
+  if (isLocked !== undefined) body.is_locked = isLocked;
   const res = await patch(accessToken, `/databases/${databaseId}`, body);
+  if (!res.success) return errorResponse(res);
+  return { content: prettyJson(res.body), is_error: false };
+}
+
+async function updateDataSource(
+  accessToken: string,
+  args: Record<string, unknown>,
+): Promise<NotionToolResult> {
+  const resolved = await resolveDataSourceId(accessToken, args, "notion_update_data_source");
+  if ("error" in resolved) return resolved.error;
+  const body: Record<string, unknown> = {};
+  const title = args.title;
+  if (Array.isArray(title)) body.title = title;
+  const properties = args.properties;
+  if (properties && typeof properties === "object") body.properties = properties;
+  const icon = args.icon;
+  if (icon && typeof icon === "object") body.icon = icon;
+  const parent = args.parent;
+  if (parent && typeof parent === "object") body.parent = parent;
+  const inTrash = args.in_trash as boolean | undefined;
+  if (inTrash !== undefined) body.in_trash = inTrash;
+  const res = await patch(accessToken, `/data_sources/${resolved.data_source_id}`, body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
 }
@@ -529,8 +585,8 @@ async function archivePage(
   if (!pageId || pageId.length === 0) {
     return missingParam("page_id", "notion_archive_page");
   }
-  const archived = (args.archived as boolean) ?? true;
-  const body: Record<string, unknown> = { archived };
+  const inTrash = (args.in_trash as boolean) ?? true;
+  const body: Record<string, unknown> = { in_trash: inTrash };
   const res = await patch(accessToken, `/pages/${pageId}`, body);
   if (!res.success) return errorResponse(res);
   return { content: prettyJson(res.body), is_error: false };
