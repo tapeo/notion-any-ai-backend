@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { AppStoreBadge } from "./app-store-badge";
 import { Container } from "./container";
+import { GITHUB_URL } from "./hero";
 
 export function Pricing() {
     return (
@@ -18,6 +19,19 @@ export function Pricing() {
                     <p className="mt-3 text-sm text-muted-foreground md:text-base">
                         No subscriptions, no per-seat fees. Pay once and connect any AI to
                         your Notion workspace.
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground md:text-base">
+                        The app is paid but fully open source. Your purchase supports
+                        development, and the code is available{" "}
+                        <a
+                            href={GITHUB_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline underline-offset-4 transition-colors hover:text-foreground"
+                        >
+                            on GitHub
+                        </a>
+                        .
                     </p>
                 </div>
 

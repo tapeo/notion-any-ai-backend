@@ -1,4 +1,4 @@
-export type Faq = { id: string; question: string; answer: string };
+export type Faq = { id: string; question: string; answer: string; link?: { href: string; label: string } };
 
 export const FAQS: Faq[] = [
     {
@@ -30,6 +30,16 @@ export const FAQS: Faq[] = [
         question: "Why is it a one-time payment?",
         answer:
             "The app runs on your device and connects directly to Notion. There is no server-side infrastructure to maintain for your usage, so there is no recurring cost to pass on. You pay once and own it.",
+    },
+    {
+        id: "open-source",
+        question: "Is the app open source?",
+        answer:
+            "Yes. The full source code is available on GitHub. The app is paid, and your purchase supports ongoing development. It also gets you the convenient App Store install with automatic updates. You are free to inspect the code or build it yourself from source.",
+        link: {
+            href: "https://github.com/tapeo/notion-any-ai",
+            label: "View the source code on GitHub",
+        },
     },
     {
         id: "refund",

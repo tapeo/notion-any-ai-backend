@@ -24,6 +24,7 @@ export const TIERS: Tier[] = [
             "Read, create, and update pages",
             "Search across your entire workspace",
             "Secure OAuth connection",
+            "Fully open source, inspect the code",
             "All future updates included",
             "14-day money-back guarantee",
         ],

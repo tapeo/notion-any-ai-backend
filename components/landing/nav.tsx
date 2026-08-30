@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -34,9 +35,13 @@ export function Nav() {
                     href="/"
                     className="flex items-center gap-2 text-sm font-semibold tracking-tight"
                 >
-                    <span className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-                        A
-                    </span>
+                    <Image
+                        src="/logo.svg"
+                        alt=""
+                        width={28}
+                        height={28}
+                        className="size-7 rounded-md"
+                    />
                     Any AI for Notion
                 </Link>
 

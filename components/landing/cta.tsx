@@ -12,7 +12,8 @@ export function CTA() {
                         Connect your AI to Notion today
                     </h2>
                     <p className="mt-3 text-sm text-muted-foreground md:text-base">
-                        One purchase, any AI model, your entire workspace. No subscriptions.
+                        One purchase, any AI model, your entire workspace. No subscriptions,
+                        fully open source.
                     </p>
                     <Button
                         render={<Link href="#pricing" />}

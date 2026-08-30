@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "./container";
 
+export const GITHUB_URL = "https://github.com/tapeo/notion-any-ai";
+
 export function Hero() {
     return (
         <section id="top" className="relative overflow-hidden pt-20 pb-16 md:pt-28 md:pb-20">
@@ -43,6 +45,18 @@ export function Hero() {
                             See how it works
                         </Button>
                     </div>
+                    <p className="mt-5 text-sm text-muted-foreground">
+                        One-time purchase, no subscription. The source code is{" "}
+                        <a
+                            href={GITHUB_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline underline-offset-4 transition-colors hover:text-foreground"
+                        >
+                            open source on GitHub
+                        </a>
+                        .
+                    </p>
                 </div>
             </Container>
         </section>

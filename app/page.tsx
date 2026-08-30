@@ -17,12 +17,12 @@ const SITE_URL = "https://anyaifornotion.com";
 export const metadata: Metadata = {
     title: "Any AI for Notion, connect any AI model to your Notion workspace",
     description:
-        "Use ChatGPT, Claude, Gemini, or any AI agent to read and write your Notion pages. Secure OAuth, mobile app, one-time purchase.",
+        "Use ChatGPT, Claude, Gemini, or any AI agent to read and write your Notion pages. Secure OAuth, mobile app, one-time purchase, open source.",
     metadataBase: new URL(SITE_URL),
     openGraph: {
         title: "Any AI for Notion",
         description:
-            "Connect any AI model to your Notion workspace. Read, create, and update pages from any AI agent.",
+            "Connect any AI model to your Notion workspace. Read, create, and update pages from any AI agent. Paid app, open source.",
         url: SITE_URL,
         siteName: "Any AI for Notion",
         type: "website",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Any AI for Notion",
         description:
-            "Connect any AI model to your Notion workspace. Read, create, and update pages from any AI agent.",
+            "Connect any AI model to your Notion workspace. Read, create, and update pages from any AI agent. Paid app, open source.",
     },
 };
 

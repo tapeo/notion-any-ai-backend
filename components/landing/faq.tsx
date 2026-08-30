@@ -5,6 +5,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { FAQS } from "@/content/landing/faqs";
+import { ArrowUpRight } from "lucide-react";
 import { Container } from "./container";
 
 export function Faq() {
@@ -26,6 +27,17 @@ export function Faq() {
                                 <AccordionTrigger>{faq.question}</AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground">
                                     {faq.answer}
+                                    {faq.link && (
+                                        <a
+                                            href={faq.link.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-3 inline-flex items-center gap-1.5 font-medium text-foreground underline underline-offset-4 transition-colors hover:opacity-80"
+                                        >
+                                            {faq.link.label}
+                                            <ArrowUpRight className="size-4" />
+                                        </a>
+                                    )}
                                 </AccordionContent>
                             </AccordionItem>
                         ))}
