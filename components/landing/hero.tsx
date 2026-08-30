@@ -15,7 +15,7 @@ export function Hero() {
             <Container>
                 <div className="mx-auto max-w-2xl text-center">
                     <Badge variant="outline" className="mb-5">
-                        Unofficial tool
+                        Custom AI providers for Notion
                     </Badge>
                     <h1 className="text-4xl font-semibold leading-[1.1] tracking-tight md:text-5xl">
                         Use any AI to read and write your Notion pages
