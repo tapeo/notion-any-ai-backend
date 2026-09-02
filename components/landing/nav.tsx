@@ -15,6 +15,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
+import { AnalyticsEvent, trackCtaClick, trackNavLinkClick } from "@/lib/analytics";
 
 type NavLink = { href: string; label: string };
 
@@ -51,6 +52,7 @@ export function Nav() {
                             key={link.href}
                             href={link.href}
                             className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                            onClick={() => trackNavLinkClick(link.label)}
                         >
                             {link.label}
                         </a>
@@ -60,6 +62,7 @@ export function Nav() {
                         nativeButton={false}
                         size="sm"
                         className="ml-2"
+                        onClick={() => trackCtaClick(AnalyticsEvent.CTA_CLICK_NAV_GET_APP)}
                     >
                         Get the app
                     </Button>
@@ -91,6 +94,7 @@ export function Nav() {
                                         <a
                                             href={link.href}
                                             className="rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                                            onClick={() => trackNavLinkClick(link.label)}
                                         />
                                     }
                                 >
@@ -104,6 +108,7 @@ export function Nav() {
                                         nativeButton={false}
                                         size="sm"
                                         className="mt-3"
+                                        onClick={() => trackCtaClick(AnalyticsEvent.CTA_CLICK_NAV_GET_APP)}
                                     />
                                 }
                             >

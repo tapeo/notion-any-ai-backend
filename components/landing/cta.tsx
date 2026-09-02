@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { AnalyticsEvent } from "@/lib/analytics";
 import { Container } from "./container";
+import { TrackedLink } from "./tracked-link";
 
 export function CTA() {
     return (
@@ -16,7 +17,7 @@ export function CTA() {
                         fully open source.
                     </p>
                     <Button
-                        render={<Link href="#pricing" />}
+                        render={<TrackedLink href="#pricing" event={AnalyticsEvent.CTA_CLICK_BOTTOM} />}
                         nativeButton={false}
                         size="lg"
                         className="mt-8"

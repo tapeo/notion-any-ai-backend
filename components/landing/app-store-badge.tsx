@@ -1,9 +1,13 @@
+"use client";
+
+import { trackAppStoreClick } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
 type AppStoreBadgeProps = {
     href: string;
+    source: string;
     className?: string;
 };
 
@@ -13,7 +17,7 @@ type AppStoreBadgeProps = {
  * Artwork provided by Apple's App Store Marketing Tools.
  * Guidelines: https://developer.apple.com/app-store/marketing/guidelines/
  */
-export function AppStoreBadge({ href, className }: AppStoreBadgeProps) {
+export function AppStoreBadge({ href, source, className }: AppStoreBadgeProps) {
     return (
         <Link
             href={href}
@@ -22,6 +26,7 @@ export function AppStoreBadge({ href, className }: AppStoreBadgeProps) {
                 className,
             )}
             aria-label="Download on the App Store"
+            onClick={() => trackAppStoreClick(source)}
         >
             <Image
                 src="/app-store-badge-white.svg"

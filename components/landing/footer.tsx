@@ -5,6 +5,7 @@ const FOOTER_LINKS: { href: string; label: string; external?: boolean }[] = [
     { href: "/api/notion-oauth/start", label: "Connect Notion" },
     { href: "#faq", label: "FAQ" },
     { href: "#pricing", label: "Pricing" },
+    { href: "/privacy", label: "Privacy" },
     {
         href: "https://github.com/tapeo/notion-any-ai",
         label: "GitHub",

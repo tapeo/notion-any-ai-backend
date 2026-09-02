@@ -2,11 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TIERS, type Tier } from "@/content/landing/pricing";
+import { AnalyticsEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { AppStoreBadge } from "./app-store-badge";
 import { Container } from "./container";
 import { GITHUB_URL } from "./hero";
+import { TrackedLink } from "./tracked-link";
 
 export function Pricing() {
     return (
@@ -23,14 +25,14 @@ export function Pricing() {
                     <p className="mt-2 text-sm text-muted-foreground md:text-base">
                         The app is paid but fully open source. Your purchase supports
                         development, and the code is available{" "}
-                        <a
+                        <TrackedLink
                             href={GITHUB_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            event={AnalyticsEvent.GITHUB_LINK_CLICK}
+                            props={{ source: "pricing" }}
                             className="underline underline-offset-4 transition-colors hover:text-foreground"
                         >
                             on GitHub
-                        </a>
+                        </TrackedLink>
                         .
                     </p>
                 </div>
@@ -82,7 +84,7 @@ function TierCard({ tier }: { tier: Tier }) {
                         ))}
                     </ul>
                     <div className="mt-6 flex justify-center">
-                        <AppStoreBadge href={tier.cta.href} />
+                        <AppStoreBadge href={tier.cta.href} source={`pricing-${tier.id}`} />
                     </div>
                 </CardContent>
             </Card>

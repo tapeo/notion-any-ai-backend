@@ -1,9 +1,10 @@
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AnalyticsEvent } from "@/lib/analytics";
 import { Container } from "./container";
+import { TrackedLink } from "./tracked-link";
 
 export const GITHUB_URL = "https://github.com/tapeo/notion-any-ai";
 
@@ -29,7 +30,7 @@ export function Hero() {
                     </p>
                     <div className="mt-8 flex justify-center gap-3">
                         <Button
-                            render={<Link href="#pricing" />}
+                            render={<TrackedLink href="#pricing" event={AnalyticsEvent.CTA_CLICK_HERO_PRIMARY} />}
                             nativeButton={false}
                             size="lg"
                         >
@@ -37,7 +38,7 @@ export function Hero() {
                             <ArrowRight className="ml-1.5 size-4" />
                         </Button>
                         <Button
-                            render={<a href="#features" />}
+                            render={<TrackedLink href="#features" event={AnalyticsEvent.CTA_CLICK_HERO_SECONDARY} />}
                             nativeButton={false}
                             variant="outline"
                             size="lg"
@@ -47,14 +48,14 @@ export function Hero() {
                     </div>
                     <p className="mt-5 text-sm text-muted-foreground">
                         One-time purchase, no subscription. The source code is{" "}
-                        <a
+                        <TrackedLink
                             href={GITHUB_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            event={AnalyticsEvent.GITHUB_LINK_CLICK}
+                            props={{ source: "hero" }}
                             className="underline underline-offset-4 transition-colors hover:text-foreground"
                         >
                             open source on GitHub
-                        </a>
+                        </TrackedLink>
                         .
                     </p>
                 </div>

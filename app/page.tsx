@@ -7,6 +7,7 @@ import { Hero } from "@/components/landing/hero";
 import { Nav } from "@/components/landing/nav";
 import { Pricing } from "@/components/landing/pricing";
 import { ProductPreview } from "@/components/landing/product-preview";
+import { SectionTracker } from "@/components/landing/section-tracker";
 import { TrustStrip } from "@/components/landing/trust-strip";
 import { FAQS } from "@/content/landing/faqs";
 import { TIERS } from "@/content/landing/pricing";
@@ -108,6 +109,7 @@ export default function Home() {
                 <CTA />
             </main>
             <Footer />
+            <SectionTracker />
         </>
     );
 }

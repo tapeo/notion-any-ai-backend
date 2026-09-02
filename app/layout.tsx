@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import PlausibleAnalytics from "@/components/plausible-analytics";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,6 +35,7 @@ export default function RootLayout({
             </head>
             <body className="bg-background text-foreground antialiased">
                 {children}
+                <PlausibleAnalytics />
             </body>
         </html>
     );
