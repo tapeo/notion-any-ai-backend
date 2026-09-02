@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: anyaifornotion
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anyaifornotion
+  namespace: anyaifornotion
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anyaifornotion
+  template:
+    metadata:
+      labels:
+        app: anyaifornotion
+    spec:
+      containers:
+        - name: app
+          image: registry.ricu.it/anyaifornotion:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: anyaifornotion-env
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anyaifornotion
+  namespace: anyaifornotion
+spec:
+  selector:
+    app: anyaifornotion
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: anyaifornotion-www-redirect
+  namespace: anyaifornotion
+spec:
+  redirectRegex:
+    regex: ^https://www\.anyaifornotion\.com/(.*)
+    replacement: https://anyaifornotion.com/${1}
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: anyaifornotion-https-redirect
+  namespace: anyaifornotion
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: anyaifornotion
+  namespace: anyaifornotion
+spec:
+  entryPoints: [websecure]
+  routes:
+    - match: Host(`anyaifornotion.com`)
+      kind: Rule
+      services:
+        - name: anyaifornotion
+          port: 80
+    - match: Host(`www.anyaifornotion.com`)
+      kind: Rule
+      middlewares:
+        - name: anyaifornotion-www-redirect
+      services:
+        - name: anyaifornotion
+          port: 80
+  tls:
+    certResolver: le
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: anyaifornotion-http
+  namespace: anyaifornotion
+spec:
+  entryPoints: [web]
+  routes:
+    - match: (Host(`anyaifornotion.com`) || Host(`www.anyaifornotion.com`)) && PathPrefix(`/.well-known/acme-challenge/`)
+      kind: Rule
+      priority: 1000
+      services:
+        - name: anyaifornotion
+          port: 80
+    - match: Host(`anyaifornotion.com`) || Host(`www.anyaifornotion.com`)
+      kind: Rule
+      middlewares:
+        - name: anyaifornotion-https-redirect
+      services:
+        - name: anyaifornotion
+          port: 80

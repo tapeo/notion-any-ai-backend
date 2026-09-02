@@ -22,6 +22,19 @@ export function Footer() {
                     <p className="text-xs text-muted-foreground">
                         Not affiliated with Notion. An unofficial tool.
                     </p>
+                    <p className="text-xs text-muted-foreground">
+                        Built with{" "}
+                        <a
+                            href="https://flutteragentkit.com/"
+                            target="_blank"
+                            rel="noopener noreferrer sponsored"
+                            title="Built with Flutter Agent Kit"
+                            className="underline underline-offset-2 transition-colors hover:text-foreground"
+                        >
+                            Flutter Agent Kit
+                        </a>
+                        .
+                    </p>
                 </div>
                 <nav className="flex gap-5">
                     {FOOTER_LINKS.map((link) => {
