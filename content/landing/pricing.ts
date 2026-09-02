@@ -3,7 +3,6 @@ export type Tier = {
     name: string;
     audience: string;
     price: string;
-    originalPrice: string;
     cadence: string;
     highlight: boolean;
     features: string[];
@@ -15,8 +14,7 @@ export const TIERS: Tier[] = [
         id: "lifetime",
         name: "Lifetime",
         audience: "One purchase, yours forever",
-        price: "$2.99",
-        originalPrice: "$4.99",
+        price: "$9.99",
         cadence: "one-time",
         highlight: true,
         features: [

@@ -66,11 +66,6 @@ function TierCard({ tier }: { tier: Tier }) {
                         <span className="text-sm text-muted-foreground">
                             {tier.cadence}
                         </span>
-                        {tier.originalPrice && (
-                            <span className="ml-1 text-sm text-muted-foreground line-through">
-                                {tier.originalPrice}
-                            </span>
-                        )}
                     </div>
                 </CardHeader>
                 <Separator className="mt-4" />
