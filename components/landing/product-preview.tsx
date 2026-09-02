@@ -26,7 +26,6 @@ export function ProductPreview() {
                         width={2152}
                         height={1622}
                         className="hidden h-auto w-full dark:block"
-                        priority
                     />
                 </div>
             </Container>

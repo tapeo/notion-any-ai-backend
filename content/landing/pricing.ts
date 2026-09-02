@@ -28,6 +28,6 @@ export const TIERS: Tier[] = [
             "All future updates included",
             "14-day money-back guarantee",
         ],
-        cta: { label: "Get the app", href: "#pricing" },
+        cta: { label: "Get the app", href: "https://apps.apple.com/us/app/any-ai-for-notion/id6789153536" },
     },
 ];

@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     description:
         "Use ChatGPT, Claude, Gemini, or any AI agent to read and write your Notion pages. Secure OAuth, mobile app, one-time purchase, open source.",
     metadataBase: new URL(SITE_URL),
+    alternates: {
+        canonical: "/",
+    },
     openGraph: {
         title: "Any AI for Notion",
         description:
@@ -50,7 +53,7 @@ const appJsonLd = {
     "@type": "SoftwareApplication",
     name: "Any AI for Notion",
     applicationCategory: "ProductivityApplication",
-    operatingSystem: "iOS, Android",
+    operatingSystem: "iOS",
     offers: TIERS.map((tier) => ({
         "@type": "Offer",
         name: tier.name,
@@ -58,6 +61,24 @@ const appJsonLd = {
         priceCurrency: "USD",
         description: tier.features.join(", "),
     })),
+};
+
+const siteJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            name: "Any AI for Notion",
+            url: SITE_URL,
+            logo: `${SITE_URL}/icon0.svg`,
+            sameAs: ["https://github.com/tapeo/notion-any-ai"],
+        },
+        {
+            "@type": "WebSite",
+            name: "Any AI for Notion",
+            url: SITE_URL,
+        },
+    ],
 };
 
 export default function Home() {
@@ -70,6 +91,10 @@ export default function Home() {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
             />
             <Nav />
             <main>
