@@ -34,6 +34,9 @@ docker build --platform linux/amd64 -t "$FULL" .
 echo "Pushing $FULL"
 docker push "$FULL"
 
+kubectl create namespace "$NAMESPACE" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
 if [[ -s "$ENV_FILE" ]]; then
   SECRET_ARGS=()
   while IFS='=' read -r key val || [[ -n "$key" ]]; do

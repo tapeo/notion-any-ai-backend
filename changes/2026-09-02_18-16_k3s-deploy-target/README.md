@@ -7,6 +7,7 @@ Added a k3s deploy target (deploy.yaml + deploy-k3s.sh) for anyaifornotion.com, 
 - Namespace, deployment, service, and image name: `anyaifornotion`. Image placeholder `registry.ricu.it/anyaifornotion:v1`, overridden at deploy time by `kubectl set image` with the git SHA.
 - Runtime env vars (`NOTION_*` from `.env.production`) are synced into k8s Secret `anyaifornotion-env` by deploy-k3s.sh and wired via `envFrom` secretRef. No `NEXT_PUBLIC_*` vars exist in this app, so no Dockerfile build args are needed.
 - `ENV_FILE=.env.production` (not `.env.prod` as in the landing kit) because that file already exists here.
+- deploy-k3s.sh idempotently creates the namespace (`kubectl create namespace --dry-run=client -o yaml | kubectl apply -f -`) before the secret sync. First run failed with `namespaces "anyaifornotion" not found` because the secret sync preceded the optional deploy.yaml apply.
 - Traefik IngressRoutes: websecure with LE certResolver, `www.anyaifornotion.com` regex redirect to apex, HTTP entrypoint with ACME challenge route (priority 1000) plus https redirect middleware.
 - deploy.sh (Cloud Run) intentionally left in place; both deploy targets coexist.
 
