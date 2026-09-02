@@ -14,7 +14,7 @@ export const TIERS: Tier[] = [
         id: "lifetime",
         name: "Lifetime",
         audience: "One purchase, yours forever",
-        price: "$9.99",
+        price: "$8.99",
         cadence: "one-time",
         highlight: true,
         features: [
