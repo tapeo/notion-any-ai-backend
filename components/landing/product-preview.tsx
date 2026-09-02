@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { Container } from "./container";
 
 export function ProductPreview() {
@@ -10,18 +12,22 @@ export function ProductPreview() {
                         <span className="size-2.5 rounded-full bg-muted-foreground/20" />
                         <span className="size-2.5 rounded-full bg-muted-foreground/20" />
                     </div>
-                    <div className="relative aspect-video w-full bg-muted/40">
-                        <div className="flex h-full w-full items-center justify-center">
-                            <div className="text-center">
-                                <p className="text-sm font-medium text-muted-foreground">
-                                    App preview
-                                </p>
-                                <p className="mt-1 text-xs text-muted-foreground/70">
-                                    Screenshot coming soon
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <Image
+                        src="/app-light.png"
+                        alt="Any AI for Notion app interface"
+                        width={2152}
+                        height={1622}
+                        className="h-auto w-full dark:hidden"
+                        priority
+                    />
+                    <Image
+                        src="/app-dark.png"
+                        alt="Any AI for Notion app interface"
+                        width={2152}
+                        height={1622}
+                        className="hidden h-auto w-full dark:block"
+                        priority
+                    />
                 </div>
             </Container>
         </section>
