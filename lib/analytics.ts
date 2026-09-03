@@ -25,6 +25,7 @@ export const AnalyticsEvent = {
     CTA_CLICK_NAV_GET_APP: "CTA Click Nav Get App",
     CTA_CLICK_BOTTOM: "CTA Click Bottom",
     CTA_CLICK_APP_STORE: "CTA Click App Store",
+    CTA_CLICK_SEO_PAGE: "CTA Click SEO Page",
     GITHUB_LINK_CLICK: "GitHub Link Click",
     NAV_LINK_CLICK: "Nav Link Click",
     SECTION_VIEW: "Section View",
