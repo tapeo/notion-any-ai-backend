@@ -4,6 +4,7 @@ import { Faq } from "@/components/landing/faq";
 import { Features } from "@/components/landing/features";
 import { Footer } from "@/components/landing/footer";
 import { Hero } from "@/components/landing/hero";
+import { InternalLinks } from "@/components/landing/internal-links";
 import { Nav } from "@/components/landing/nav";
 import { Pricing } from "@/components/landing/pricing";
 import { ProductPreview } from "@/components/landing/product-preview";
@@ -106,6 +107,7 @@ export default function Home() {
                 <Comparison />
                 <Pricing />
                 <Faq />
+                <InternalLinks />
                 <CTA />
             </main>
             <Footer />
