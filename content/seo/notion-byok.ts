@@ -3,13 +3,13 @@ import type { SeoPageContent } from "./types";
 
 export const NOTION_BYOK: SeoPageContent = {
     slug: "notion-byok",
-    title: "Notion BYOK: bring your own API key to Notion | Any AI for Notion",
+    title: "Notion AI BYOK: bring your own API key to Notion | Any AI for Notion",
     description:
-        "Use your own OpenAI, Anthropic, Groq, OpenRouter, or local Ollama key with Notion. Full read and write access, one-time purchase, open source. No $10 per seat add-on.",
+        "Notion AI has no BYOK option, but you can still use your own OpenAI, Anthropic, Groq, OpenRouter, or local Ollama key with Notion. Full read and write access, one-time purchase, open source.",
     heroBadge: "Bring your own key",
-    h1: "Notion BYOK: bring your own API key to Notion",
+    h1: "Notion AI BYOK: bring your own API key to Notion",
     heroSubtext:
-        "Stop paying $10 per month per seat for a fixed model. Use your personal OpenAI, Anthropic, Groq, or OpenRouter key, or a local Ollama endpoint, directly against your Notion workspace.",
+        "Notion AI does not support BYOK. Any AI for Notion does: stop paying $10 per month per seat for a fixed model. Use your personal OpenAI, Anthropic, Groq, or OpenRouter key, or a local Ollama endpoint, directly against your Notion workspace.",
     sections: [
         {
             id: "cost",
@@ -51,6 +51,12 @@ export const NOTION_BYOK: SeoPageContent = {
         },
     ],
     faqs: [
+        {
+            id: "notion-ai-byok",
+            question: "Does Notion AI support BYOK?",
+            answer:
+                "No. Notion AI has no bring-your-own-key option. You cannot plug in your own OpenAI, Anthropic, or OpenRouter key, and you cannot choose the model. Any AI for Notion adds BYOK support to Notion: connect your workspace and use your own API keys with any OpenAI-compatible model.",
+        },
         {
             id: "what-is-byok",
             question: "What does BYOK mean?",

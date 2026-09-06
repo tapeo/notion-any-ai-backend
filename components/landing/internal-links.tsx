@@ -15,6 +15,7 @@ const LINK_GROUPS: { title: string; links: { href: string; label: string }[] }[]
         links: [
             { href: "/connect/chatgpt-to-notion", label: "Connect ChatGPT to Notion" },
             { href: "/connect/claude-to-notion", label: "Connect Claude to Notion" },
+            { href: "/notion-claude", label: "Notion Claude" },
             { href: "/connect/gemini-to-notion", label: "Connect Gemini to Notion" },
             { href: "/connect/local-llm-to-notion", label: "Connect local LLMs to Notion" },
         ],
@@ -25,7 +26,7 @@ const LINK_GROUPS: { title: string; links: { href: string; label: string }[] }[]
             { href: "/notion-byok", label: "Bring your own API key" },
             { href: "/chat-with-notion", label: "Chat with your workspace" },
             { href: "/notion-ai-mobile-app", label: "Mobile assistant" },
-            { href: "/notion-ai-lifetime", label: "Lifetime license" },
+            { href: "/notion-ai-lifetime", label: "Notion AI lifetime deal" },
             { href: "/open-source-notion-ai", label: "Open source assistant" },
         ],
     },

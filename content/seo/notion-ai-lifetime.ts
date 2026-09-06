@@ -4,11 +4,11 @@ export const NOTION_AI_LIFETIME: SeoPageContent = {
     slug: "notion-ai-lifetime",
     title: "Notion AI lifetime deal: pay once, no monthly fee | Any AI for Notion",
     description:
-        "Notion AI without the subscription. Buy Any AI for Notion once for $8.99, use any model with your own keys, and own it forever. Open source, with a 14-day money-back guarantee.",
+        "Looking for a Notion AI lifetime deal? Notion AI is subscription-only, but Any AI for Notion gives you the one-time alternative: $8.99 once, any model with your own keys, open source, 14-day money-back guarantee.",
     heroBadge: "One-time purchase",
-    h1: "Notion AI without the subscription",
+    h1: "Notion AI lifetime deal: pay once, no subscription",
     heroSubtext:
-        "Buy once, use forever. No recurring fees, no seat minimums, no price increases.",
+        "The lifetime deal Notion AI does not offer. Buy once, use forever. No recurring fees, no seat minimums, no price increases.",
     sections: [
         {
             id: "saas-fatigue",
@@ -37,8 +37,22 @@ export const NOTION_AI_LIFETIME: SeoPageContent = {
                 "Notion AI at $10 per month costs more in five weeks than Any AI for Notion costs once. Even adding typical API token spend of a few dollars per month, the one-time purchase pays for itself within the first couple of months of subscription pricing.",
             ],
         },
+        {
+            id: "notion-ai-lifetime-deal",
+            title: "Why there is no official Notion AI lifetime deal",
+            paragraphs: [
+                "Notion AI has never offered a lifetime deal or one-time purchase. It is sold exclusively as a $10 per user per month add-on, or bundled into Business plans at $24+ per user per month, because the subscription funds Notion's own AI infrastructure.",
+                "Any AI for Notion can offer a true lifetime deal because the app runs on your device and talks directly to Notion's official API and your chosen AI provider. With no per-user server infrastructure to maintain, there is no recurring cost that would require a subscription.",
+            ],
+        },
     ],
     faqs: [
+        {
+            id: "notion-ai-lifetime-deal",
+            question: "Does Notion AI offer a lifetime deal?",
+            answer:
+                "No. Notion AI is only available as a subscription: $10 per user per month as an add-on, or bundled into Business plans at $24+ per user per month. There is no one-time purchase option from Notion. Any AI for Notion is the lifetime-deal alternative: $8.99 once and the app is yours forever.",
+        },
         {
             id: "one-time",
             question: "Is it really a one-time payment?",

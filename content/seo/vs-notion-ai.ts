@@ -60,6 +60,12 @@ export const VS_NOTION_AI: SeoPageContent = {
     ],
     faqs: [
         {
+            id: "notion-ai-add-on",
+            question: "Is Notion AI a paid add-on?",
+            answer:
+                "Yes. Notion AI is a paid add-on that costs $10 per user per month on plans that support it, or it comes bundled when you upgrade to Business plans at $24+ per user per month. The add-on does not include a bring-your-own-key option or model choice. Any AI for Notion is an $8.99 one-time purchase that works with your own API keys instead.",
+        },
+        {
             id: "is-notion-ai-worth-it",
             question: "Is Notion AI worth it?",
             answer:
